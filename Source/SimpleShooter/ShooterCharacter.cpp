@@ -4,6 +4,7 @@
 #include "GameFramework/Actor.h"
 #include "GunActor.h"
 #include "Components/CapsuleComponent.h"
+#include "SimpleShooterGameModeBase.h"
 
 // Sets default values
 AShooterCharacter::AShooterCharacter()
@@ -97,6 +98,13 @@ float AShooterCharacter::TakeDamage(float DamageAmount, struct FDamageEvent cons
 	{
 		DetachFromControllerPendingDestroy();
 		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+		// get the game mode so we can tell it a pawn died
+		ASimpleShooterGameModeBase *GameMode = GetWorld()->GetAuthGameMode<ASimpleShooterGameModeBase>();
+		if (GameMode != nullptr)
+		{
+			GameMode->PawnKilled(this);
+		}
 	}
 
 	return DamageApplied;
